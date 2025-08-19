@@ -190,11 +190,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#02023d] flex justify-center items-center flex-col gap-[15px]">
+    <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#02023d] flex justify-center items-center flex-col gap-[15px] overflow-hidden">
 
       <CgMenuRight onClick={() => setHam(true)} className="lg:hidden text-white absolute top-[20px] right-[20px] w-[25px] h-[25px] cursor-pointer" />
 
-      <div className={`absolute top-0 w-full h-full bg-[#00000055] backdrop-blur-lg p-[20px] transition-transform flex flex-col gap-[20px] items-start
+      <div className={`absolute lg:hidden top-0 w-full h-full bg-[#00000055] backdrop-blur-lg p-[20px] transition-transform flex flex-col gap-[20px] items-start
         ${ham ? 'translate-x-0' : 'translate-x-full'} `}>
         <RxCross1 onClick={() => setHam(false)} className=" text-white absolute top-[20px] right-[20px] w-[25px] h-[25px] cursor-pointer" />
         <button
@@ -246,14 +246,14 @@ const Home = () => {
       {!aiText && (
         <div className="flex flex-col items-center">
           <img src={userImg} alt="AI Response" className="w-[200px] h-[200px] object-contain" />
-          <p className="text-white text-[25px]">{userText}</p>
+          <p className="text-white text-[20px]">{userText}</p>
         </div>
       )}
 
       {aiText && (
         <div className="flex flex-col items-center">
           <img src={aiImg} alt="AI Response" className="w-[200px] h-[200px] object-contain" />
-          <p className="text-white text-[25px]">{aiText}</p>
+          <p className="text-white text-[20px]">{aiText}</p>
         </div>
       )}
 
