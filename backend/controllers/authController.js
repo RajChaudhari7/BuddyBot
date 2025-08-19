@@ -40,9 +40,9 @@ export const signUp = async (req, res) => {
         // pass token in cookie parser
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false, // Use secure cookies in production
+            secure: true, // Use secure cookies in production
             maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
-            sameSite: "strict" // Prevent CSRF attacks
+            sameSite: "none" // Prevent CSRF attacks
         });
 
         // Return success response
@@ -81,9 +81,9 @@ export const login = async (req, res) => {
         // pass token in cookie parser
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false, // Use secure cookies in production
+            secure: true, // Use secure cookies in production
             maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
-            sameSite: "strict" // Prevent CSRF attacks
+            sameSite: "none" // Prevent CSRF attacks
         });
 
         // Return success response
