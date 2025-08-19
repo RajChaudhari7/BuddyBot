@@ -48,7 +48,7 @@ const Home = () => {
       };
       loadVoices();
     } else {
-      alert("Text-to-speech is not supported in your browser. Please use Chrome for Android.");
+      alert("Text-to-speech is not supported in your browser. Please use Chrome or Edge.");
     }
   };
 
@@ -182,6 +182,16 @@ const Home = () => {
     };
   }, [userData.assistantName, getGeminiResponse]);
 
+  // Load voices when the component mounts
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      console.log("Available voices:", voices);
+    };
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+  }, []);
+
   useEffect(() => {
     if (!("speechSynthesis" in window)) {
       console.error("Text-to-speech not supported in this browser.");
@@ -248,10 +258,10 @@ const Home = () => {
         Customize your Assistant
       </button>
 
-      {/* Start Assistant Button for Mobile */}
+      {/* Start Assistant Button for both Mobile and Laptop */}
       <button
         onClick={startAssistant}
-        className="min-w-[150px]  h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] mb-[20px]"
+        className="min-w-[150px] h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] mb-[20px]"
       >
         Start Assistant
       </button>
