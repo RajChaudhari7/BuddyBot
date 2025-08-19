@@ -6,7 +6,6 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import userRouter from './routes/userRoutes.js';
 import connectCloudinary from './config/cloudinary.js';
-import { geminiResponse } from './gemini.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,7 +14,7 @@ await connectDB();
 await connectCloudinary();
 
 app.use(cors({
-    origin: 'https://buddy-bot-zeta.vercel.app',
+    origin: ['http://localhost:5173', 'https://buddy-bot-zeta.vercel.app'],
     credentials: true
 }))
 

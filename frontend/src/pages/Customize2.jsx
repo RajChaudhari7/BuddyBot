@@ -29,7 +29,7 @@ const Customize2 = () => {
 
     console.log(result.data);
     setUserData(result.data.user); // Make sure the response contains the updated user data
-    navigate("/assistant"); // Navigate to the home page after successful update
+    navigate("/"); // Navigate to the home page after successful update
   } catch (error) {
     console.log(error);
   } finally {

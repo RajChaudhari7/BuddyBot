@@ -20,7 +20,7 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route
-          path="/assistant"
+          path="/"
           element={
             userData?.assistantImage && userData?.assistantName ? (
               <Home />
@@ -32,11 +32,11 @@ const App = () => {
 
         <Route
           path="/signup"
-          element={!userData ? <SignUp /> : <Navigate to="/assistant" />}
+          element={!userData ? <SignUp /> : <Navigate to="/" />}
         />
         <Route
           path="/signin"
-          element={!userData ? <SignIn /> : <Navigate to="/assistant" />}
+          element={!userData ? <SignIn /> : <Navigate to="/" />}
         />
         <Route
           path="/customize"

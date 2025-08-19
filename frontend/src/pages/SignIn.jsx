@@ -19,7 +19,7 @@ const SignIn = () => {
         setLoading(true);
         try {
             const result = await axios.post(
-                `${backendUrl}/api/auth/login`,
+                backendUrl + '/api/auth/login',
                 { email, password },
                 { withCredentials: true }
             );
@@ -31,7 +31,6 @@ const SignIn = () => {
                 toast.error(result.data.message);
             }
         } catch (error) {
-            console.log(error);
             toast.error(error.response?.data?.message || "An error occurred during login");
             setUserData(null);
         } finally {

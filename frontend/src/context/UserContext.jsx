@@ -5,7 +5,12 @@ import { useNavigate } from 'react-router-dom';
 export const userDataContext = createContext();
 
 const UserDataProvider = ({ children }) => {
-  const backendUrl = "https://buddy-bot-backend.vercel.app";
+  // Define backendUrl as an array
+  const backendUrl = ["http://localhost:3000", "https://buddy-bot-backend.vercel.app"];
+
+  // Select the appropriate URL (e.g., based on environment or preference)
+  const selectedBackendUrl = backendUrl[1]; // Use the Vercel URL (or switch logic as needed)
+
   const [userData, setUserData] = useState(null);
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
@@ -15,7 +20,7 @@ const UserDataProvider = ({ children }) => {
 
   const handleCurrentUser = async () => {
     try {
-      const result = await axios.get(backendUrl + '/api/user/current', {
+      const result = await axios.get(selectedBackendUrl + '/api/user/current', {
         withCredentials: true,
       });
       if (result.data.success) {
@@ -30,22 +35,19 @@ const UserDataProvider = ({ children }) => {
 
   const getGeminiResponse = async (command) => {
     try {
-
-      const result = await axios.post(backendUrl + '/api/user/ask', { command }, { withCredentials: true })
-      return result.data
-
+      const result = await axios.post(selectedBackendUrl + '/api/user/ask', { command }, { withCredentials: true });
+      return result.data;
     } catch (error) {
       console.log(error);
-
     }
-  }
+  };
 
   useEffect(() => {
     handleCurrentUser();
   }, []);
 
   const value = {
-    backendUrl,
+    backendUrl: selectedBackendUrl, // Pass the selected URL
     navigate,
     userData,
     setUserData,
@@ -55,7 +57,8 @@ const UserDataProvider = ({ children }) => {
     setBackendImage,
     selectedImage,
     setSelectedImage,
-    isLoading,getGeminiResponse
+    isLoading,
+    getGeminiResponse,
   };
 
   return (

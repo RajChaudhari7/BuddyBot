@@ -14,7 +14,7 @@ const Home = () => {
   const isRecognitionActiveRef = useRef(false);
   const [aiText, setAiText] = useState("");
   const [userText, setUserText] = useState("");
-  const [ham, setHam] = useState(false)
+  const [ham, setHam] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -29,10 +29,10 @@ const Home = () => {
     }
   };
 
-  const speak = (text, lang = "hi-In") => {
+  const speak = (text, lang = "hi-IN") => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = hi-IN;
+      utterance.lang = lang;
       const loadVoices = () => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -48,7 +48,7 @@ const Home = () => {
       };
       loadVoices();
     } else {
-      console.error("Text-to-speech not supported in this browser.");
+      alert("Text-to-speech is not supported in your browser. Please use Chrome for Android.");
     }
   };
 
@@ -113,14 +113,15 @@ const Home = () => {
     }
   };
 
-  window.speechSynthesis.onvoiceschanged = () => {
+  const startAssistant = () => {
     const greeting = new SpeechSynthesisUtterance(`Hello ${userData.name}, what can I help you with?`);
     greeting.lang = 'hi-IN';
-    greeting.onend = () => {
-      startTimeout();
-    };
     window.speechSynthesis.speak(greeting);
-  }
+
+    if (recognitionRef.current && !isRecognitionActiveRef.current) {
+      recognitionRef.current.start();
+    }
+  };
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -132,28 +133,31 @@ const Home = () => {
     recognition.continuous = true;
     recognition.lang = "en-US";
     recognitionRef.current = recognition;
-    isRecognitionActiveRef.current = false;
+
     recognition.onstart = () => {
       console.log("Recognition started");
       isRecognitionActiveRef.current = true;
       setIsListening(true);
     };
+
     recognition.onend = () => {
       console.log("Recognition ended");
       isRecognitionActiveRef.current = false;
       setIsListening(false);
     };
+
     recognition.onerror = (event) => {
       console.warn("Recognition error:", event.error);
       if (event.error !== "aborted") {
         isRecognitionActiveRef.current = false;
       }
     };
+
     recognition.onresult = async (e) => {
       const transcript = e.results[e.results.length - 1][0].transcript.trim();
       console.log("Heard:", transcript);
-      setAiText("")
-      setUserText(transcript)
+      setAiText("");
+      setUserText(transcript);
       if (transcript.toLowerCase().includes(userData.assistantName.toLowerCase())) {
         recognition.stop();
         try {
@@ -161,31 +165,31 @@ const Home = () => {
           console.log("Data from getGeminiResponse:", data);
           if (data?.response) {
             handleCommand(data);
-            setAiText(data.response)
-            setUserText("")
+            setAiText(data.response);
+            setUserText("");
           }
         } catch (error) {
           console.error("Error in getGeminiResponse:", error);
         }
       }
     };
-    const startRecognition = () => {
-      if (!isRecognitionActiveRef.current) {
-        recognition.start();
-      }
-    };
-    startRecognition();
+
     return () => {
-      recognition.stop();
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsListening(false);
     };
   }, [userData.assistantName, getGeminiResponse]);
 
   useEffect(() => {
-    window.speechSynthesis.onvoiceschanged = () => {
-      const voices = window.speechSynthesis.getVoices();
-      console.log("Available voices:", voices);
-    };
+    if (!("speechSynthesis" in window)) {
+      console.error("Text-to-speech not supported in this browser.");
+    }
+
+    if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+      console.error("Speech recognition not supported in this browser.");
+    }
   }, []);
 
   useEffect(() => {
@@ -200,42 +204,37 @@ const Home = () => {
 
   return (
     <div className="w-full h-[100vh] bg-gradient-to-t from-[black] to-[#02023d] flex justify-center items-center flex-col gap-[15px] overflow-hidden">
-
       <CgMenuRight onClick={() => setHam(true)} className="lg:hidden text-white absolute top-[20px] right-[20px] w-[25px] h-[25px] cursor-pointer" />
-
       <div className={`absolute lg:hidden top-0 w-full h-full bg-[#00000055] backdrop-blur-lg p-[20px] transition-transform flex flex-col gap-[20px] items-start
-        ${ham ? 'translate-x-0' : 'translate-x-full'} `}>
-        <RxCross1 onClick={() => setHam(false)} className=" text-white absolute top-[20px] right-[20px] w-[25px] h-[25px] cursor-pointer" />
+        ${ham ? 'translate-x-0' : 'translate-x-full'}`}>
+        <RxCross1 onClick={() => setHam(false)} className="text-white absolute top-[20px] right-[20px] w-[25px] h-[25px] cursor-pointer" />
         <button
           type="button"
-          className=" min-w-[150px] h-[60px] cursor-pointer  bg-white 
-        rounded-full  text-black font-semibold text-[19px]"
+          className="min-w-[150px] h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px]"
           onClick={handleLogout}
         >
           Log Out
         </button>
         <button
           type="button"
-          className="  min-w-[150px] h-[60px] cursor-pointer bg-white  rounded-full  text-black font-semibold text-[19px] px-[20px] py-[10px]"
+          className="min-w-[150px] h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] px-[20px] py-[10px]"
           onClick={() => navigate("/customize")}
         >
           Customize your Assistant
         </button>
-
         <div className="w-full h-[2px] bg-gray-400"></div>
         <h1 className="text-white font-semibold text-[19px]">History</h1>
-
-        <div className="w-full h-[400px] overflow-auto gap-[20px] flex flex-col ">
-          {userData.history?.map((his) => (
-            <span className="text-gray-200 text-[18px] mt-[20px] ">{his}</span>
+        <div className="w-full h-[400px] overflow-auto gap-[20px] flex flex-col">
+          {userData.history?.map((his, index) => (
+            <span key={index} className="text-gray-200 text-[18px] mt-[20px]">
+              {his}
+            </span>
           ))}
         </div>
-
-      </div >
-
+      </div>
       <button
         type="button"
-        className="absolute min-w-[150px] h-[60px] cursor-pointer top-[20px] right-[20px] bg-white hidden lg:block 
+        className="absolute min-w-[150px] h-[60px] cursor-pointer top-[20px] right-[20px] bg-white hidden lg:block
         rounded-full mt-[30px] text-black font-semibold text-[19px]"
         onClick={handleLogout}
       >
@@ -243,11 +242,20 @@ const Home = () => {
       </button>
       <button
         type="button"
-        className=" hidden lg:block absolute min-w-[150px] h-[60px] cursor-pointer bg-white top-[100px] right-[20px] rounded-full mt-[30px] text-black font-semibold text-[19px] px-[20px] py-[10px]"
+        className="hidden lg:block absolute min-w-[150px] h-[60px] cursor-pointer bg-white top-[100px] right-[20px] rounded-full mt-[30px] text-black font-semibold text-[19px] px-[20px] py-[10px]"
         onClick={() => navigate("/customize")}
       >
         Customize your Assistant
       </button>
+
+      {/* Start Assistant Button for Mobile */}
+      <button
+        onClick={startAssistant}
+        className="min-w-[150px] lg:hidden h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] mb-[20px]"
+      >
+        Start Assistant
+      </button>
+
       <div className="w-[300px] h-[400px] flex justify-center items-center overflow-hidden rounded-4xl shadow-lg">
         <img src={userData?.assistantImage} alt="Assistant" className="h-full object-cover" />
       </div>
@@ -258,14 +266,12 @@ const Home = () => {
           <p className="text-white text-[20px]">{userText}</p>
         </div>
       )}
-
       {aiText && (
         <div className="flex flex-col items-center">
           <img src={aiImg} alt="AI Response" className="w-[200px] h-[200px] object-contain" />
           <p className="text-white text-[20px]">{aiText}</p>
         </div>
       )}
-
     </div>
   );
 };

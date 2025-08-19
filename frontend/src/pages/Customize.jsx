@@ -34,7 +34,7 @@ const Customize = () => {
 
             <MdKeyboardBackspace
                 className='absolute top-[30px] left-[30px] text-white w-[25px] h-[25px] cursor-pointer'
-                onClick={() => navigate('/assistant')}
+                onClick={() => navigate('/')}
             />
 
 
