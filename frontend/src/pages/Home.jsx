@@ -251,7 +251,7 @@ const Home = () => {
       {/* Start Assistant Button for Mobile */}
       <button
         onClick={startAssistant}
-        className="min-w-[150px] lg:hidden h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] mb-[20px]"
+        className="min-w-[150px]  h-[60px] cursor-pointer bg-white rounded-full text-black font-semibold text-[19px] mb-[20px]"
       >
         Start Assistant
       </button>
