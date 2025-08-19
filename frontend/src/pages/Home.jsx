@@ -29,10 +29,10 @@ const Home = () => {
     }
   };
 
-  const speak = (text, lang = "en-US") => {
+  const speak = (text, lang = "hi-In") => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang;
+      utterance.lang = hi-IN;
       const loadVoices = () => {
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -112,6 +112,15 @@ const Home = () => {
         console.warn(`Unknown command type: ${type}`);
     }
   };
+
+  window.speechSynthesis.onvoiceschanged = () => {
+    const greeting = new SpeechSynthesisUtterance(`Hello ${userData.name}, what can I help you with?`);
+    greeting.lang = 'hi-IN';
+    greeting.onend = () => {
+      startTimeout();
+    };
+    window.speechSynthesis.speak(greeting);
+  }
 
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
