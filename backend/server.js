@@ -15,7 +15,7 @@ await connectDB();
 await connectCloudinary();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://buddy-bot-zeta.vercel.app',
     credentials: true
 }))
 
