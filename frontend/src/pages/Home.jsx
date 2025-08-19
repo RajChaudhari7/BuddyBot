@@ -16,6 +16,18 @@ const Home = () => {
   const [userText, setUserText] = useState("");
   const [ham, setHam] = useState(false);
 
+  const getCurrentISTTime = () => {
+    const now = new Date();
+    const options = {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    };
+    return now.toLocaleTimeString('en-IN', options);
+  };
+
   const handleLogout = async () => {
     try {
       const result = await axios.get(`${backendUrl}/api/auth/logout`, {
@@ -55,10 +67,21 @@ const Home = () => {
   const handleCommand = (data) => {
     console.log("Received data in handleCommand:", data);
     const { type, userInput, response, lang } = data;
+
+    // Handle time query
+    if (userInput?.toLowerCase().includes("time")) {
+      const currentTime = getCurrentISTTime();
+      const timeResponse = `The current time in India is ${currentTime}.`;
+      setAiText(timeResponse);
+      speak(timeResponse, lang);
+      return;
+    }
+
     if (response) {
       setAiText(response);
       speak(response, lang);
     }
+
     switch (type) {
       case "general":
         if (userInput?.toLowerCase().includes("youtube")) {
@@ -182,7 +205,6 @@ const Home = () => {
     };
   }, [userData.assistantName, getGeminiResponse]);
 
-  // Load voices when the component mounts
   useEffect(() => {
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
