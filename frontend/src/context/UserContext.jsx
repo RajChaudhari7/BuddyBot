@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export const userDataContext = createContext();
 
 const UserDataProvider = ({ children }) => {
-  const backendUrl = "http://localhost:3000";
+  const backendUrl = "https://buddy-bot-backend.vercel.app";
   const [userData, setUserData] = useState(null);
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
