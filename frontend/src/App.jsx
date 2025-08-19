@@ -32,11 +32,11 @@ const App = () => {
 
         <Route
           path="/signup"
-          element={!userData ? <SignUp /> : <Navigate to="/" />}
+          element={!userData ? <SignUp /> : <Navigate to="/assistant" />}
         />
         <Route
           path="/signin"
-          element={!userData ? <SignIn /> : <Navigate to="/" />}
+          element={!userData ? <SignIn /> : <Navigate to="/assistant" />}
         />
         <Route
           path="/customize"
