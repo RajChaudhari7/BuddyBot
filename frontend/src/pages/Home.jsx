@@ -83,6 +83,12 @@ const Home = () => {
     }
 
     switch (type) {
+      case "get_time":
+        const currentTime = getCurrentISTTime();
+        const timeResponse = `The current time in India is ${currentTime}.`;
+        setAiText(timeResponse);
+        speak(timeResponse, lang);
+        break;
       case "general":
         if (userInput?.toLowerCase().includes("youtube")) {
           window.open(`https://www.youtube.com/`, "_blank");
@@ -156,26 +162,22 @@ const Home = () => {
     recognition.continuous = true;
     recognition.lang = "en-US";
     recognitionRef.current = recognition;
-
     recognition.onstart = () => {
       console.log("Recognition started");
       isRecognitionActiveRef.current = true;
       setIsListening(true);
     };
-
     recognition.onend = () => {
       console.log("Recognition ended");
       isRecognitionActiveRef.current = false;
       setIsListening(false);
     };
-
     recognition.onerror = (event) => {
       console.warn("Recognition error:", event.error);
       if (event.error !== "aborted") {
         isRecognitionActiveRef.current = false;
       }
     };
-
     recognition.onresult = async (e) => {
       const transcript = e.results[e.results.length - 1][0].transcript.trim();
       console.log("Heard:", transcript);
@@ -188,7 +190,9 @@ const Home = () => {
           console.log("Data from getGeminiResponse:", data);
           if (data?.response) {
             handleCommand(data);
-            setAiText(data.response);
+            if (!data.type || data.type !== "get_time") {
+              setAiText(data.response);
+            }
             setUserText("");
           }
         } catch (error) {
@@ -196,7 +200,6 @@ const Home = () => {
         }
       }
     };
-
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
@@ -218,7 +221,6 @@ const Home = () => {
     if (!("speechSynthesis" in window)) {
       console.error("Text-to-speech not supported in this browser.");
     }
-
     if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
       console.error("Speech recognition not supported in this browser.");
     }
