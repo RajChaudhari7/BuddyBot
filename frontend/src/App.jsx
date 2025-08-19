@@ -20,7 +20,7 @@ const App = () => {
       <Toaster />
       <Routes>
         <Route
-          path="/"
+          path="/assistant"
           element={
             userData?.assistantImage && userData?.assistantName ? (
               <Home />
